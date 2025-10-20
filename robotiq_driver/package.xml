@@ -17,6 +17,7 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
   <depend>serial</depend>
+  <depend>pal_statistics</depend>
 
   <!-- Check code against style conventions using clang-format. -->
   <test_depend>ament_clang_format</test_depend>
