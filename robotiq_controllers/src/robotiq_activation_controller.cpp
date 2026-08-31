@@ -105,14 +105,22 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Roboti
 bool RobotiqActivationController::reactivateGripper(std_srvs::srv::Trigger::Request::SharedPtr /*req*/,
                                                     std_srvs::srv::Trigger::Response::SharedPtr resp)
 {
-  command_interfaces_[REACTIVATE_GRIPPER_RESPONSE].set_value(ASYNC_WAITING);
-  command_interfaces_[REACTIVATE_GRIPPER_CMD].set_value(1.0);
+  const bool response_initialized = command_interfaces_[REACTIVATE_GRIPPER_RESPONSE].set_value(ASYNC_WAITING);
+  const bool command_sent = command_interfaces_[REACTIVATE_GRIPPER_CMD].set_value(1.0);
+  if (!response_initialized || !command_sent)
+  {
+    resp->success = false;
+    resp->message = "Failed to access the gripper command interfaces";
+    return false;
+  }
 
-  while (command_interfaces_[REACTIVATE_GRIPPER_RESPONSE].get_value() == ASYNC_WAITING)
+  auto response = command_interfaces_[REACTIVATE_GRIPPER_RESPONSE].get_optional();
+  while (!response.has_value() || response.value() == ASYNC_WAITING)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    response = command_interfaces_[REACTIVATE_GRIPPER_RESPONSE].get_optional();
   }
-  resp->success = command_interfaces_[REACTIVATE_GRIPPER_RESPONSE].get_value();
+  resp->success = static_cast<bool>(response.value());
 
   return resp->success;
 }

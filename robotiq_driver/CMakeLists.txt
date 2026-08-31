@@ -56,16 +56,22 @@ add_library(
   src/default_serial.cpp
   src/default_serial_factory.cpp
 )
-target_link_libraries(robotiq_driver atomic)
+target_link_libraries(robotiq_driver
+  PUBLIC
+    hardware_interface::hardware_interface
+    hardware_interface::mock_components
+    pluginlib::pluginlib
+    rclcpp::rclcpp
+    rclcpp_lifecycle::rclcpp_lifecycle
+    serial::serial
+  PRIVATE
+    atomic
+)
 target_include_directories(
   robotiq_driver
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
-)
-ament_target_dependencies(
-  robotiq_driver
-  ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 
 ###############################################################################

@@ -20,9 +20,9 @@ ament_add_gmock(test_robotiq_gripper_hardware_interface
 target_include_directories(test_robotiq_gripper_hardware_interface
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
-target_link_libraries(test_robotiq_gripper_hardware_interface robotiq_driver)
-ament_target_dependencies(test_robotiq_gripper_hardware_interface
-    ros2_control_test_assets
+target_link_libraries(test_robotiq_gripper_hardware_interface
+    robotiq_driver
+    ros2_control_test_assets::ros2_control_test_assets
 )
 
 ###############################################################################

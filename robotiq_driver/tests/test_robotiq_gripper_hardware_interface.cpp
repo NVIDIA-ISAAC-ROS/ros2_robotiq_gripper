@@ -30,6 +30,7 @@
 #include <gtest/gtest.h>
 
 #include <chrono>
+#include <memory>
 
 #include <robotiq_driver/default_driver_factory.hpp>
 #include <robotiq_driver/hardware_interface.hpp>
@@ -40,6 +41,7 @@
 #include <hardware_interface/types/lifecycle_state_names.hpp>
 
 #include <lifecycle_msgs/msg/state.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/state.hpp>
 
 #include <ros2_control_test_assets/components_urdfs.hpp>
@@ -75,7 +77,8 @@ TEST(TestRobotiqGripperHardwareInterface, load_urdf)
        )";
 
   auto urdf = ros2_control_test_assets::urdf_head + urdf_control_ + ros2_control_test_assets::urdf_tail;
-  hardware_interface::ResourceManager rm(urdf);
+  hardware_interface::ResourceManager rm(urdf, std::make_shared<rclcpp::Clock>(RCL_STEADY_TIME),
+                                         rclcpp::get_logger("robotiq_driver_test"), false, 100);
 
   // Check interfaces
   EXPECT_EQ(1u, rm.system_components_size());
